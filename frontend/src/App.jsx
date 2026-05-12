@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import "./App.css";
 
 function App() {
-
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -17,10 +17,8 @@ function App() {
   }, [messages]);
 
   const startVoiceInput = () => {
-
     const SpeechRecognition =
-      window.SpeechRecognition ||
-      window.webkitSpeechRecognition;
+      window.SpeechRecognition || window.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
       alert("Speech Recognition not supported");
@@ -34,14 +32,10 @@ function App() {
     recognition.interimResults = false;
 
     setListening(true);
-
     recognition.start();
 
     recognition.onresult = (event) => {
-
-      const transcript =
-        event.results[0][0].transcript;
-
+      const transcript = event.results[0][0].transcript;
       setMessage(transcript);
     };
 
@@ -51,13 +45,11 @@ function App() {
   };
 
   const uploadPDF = async (e) => {
-
     const file = e.target.files[0];
 
     if (!file) return;
 
     const formData = new FormData();
-
     formData.append("file", file);
 
     await fetch("http://127.0.0.1:8000/upload-pdf", {
@@ -69,7 +61,6 @@ function App() {
   };
 
   const sendMessage = async () => {
-
     if (!message.trim()) return;
 
     const userMessage = {
@@ -80,9 +71,7 @@ function App() {
     setMessages((prev) => [...prev, userMessage]);
 
     const currentMessage = message;
-
     setMessage("");
-
     setLoading(true);
 
     const res = await fetch("http://127.0.0.1:8000/chat", {
@@ -103,7 +92,6 @@ function App() {
     };
 
     setMessages((prev) => [...prev, botMessage]);
-
     setLoading(false);
   };
 
@@ -114,26 +102,15 @@ function App() {
 
   return (
     <div className="app">
-
       <div className="chat-container">
-
         <h1>AI University Assistant</h1>
 
-        <button
-          className="clear-btn"
-          onClick={clearChat}
-        >
+        <button className="clear-btn" onClick={clearChat}>
           Clear Chat
         </button>
 
         <div className="upload-area">
-
-          <input
-            type="file"
-            accept=".pdf"
-            onChange={uploadPDF}
-          />
-
+          <input type="file" accept=".pdf" onChange={uploadPDF} />
         </div>
 
         {listening && (
@@ -150,35 +127,27 @@ function App() {
         )}
 
         <div className="chat-box">
-
           {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`message ${msg.sender}`}
-            >
-              {msg.text}
+            <div key={index} className={`message ${msg.sender}`}>
+              {msg.sender === "bot" ? (
+                <ReactMarkdown>{msg.text}</ReactMarkdown>
+              ) : (
+                msg.text
+              )}
             </div>
           ))}
 
-          {loading && (
-            <div className="message bot">
-              Thinking...
-            </div>
-          )}
+          {loading && <div className="message bot">Thinking...</div>}
 
           <div ref={chatEndRef}></div>
-
         </div>
 
         <div className="input-area">
-
           <input
             type="text"
             placeholder="Ask something..."
             value={message}
-            onChange={(e) =>
-              setMessage(e.target.value)
-            }
+            onChange={(e) => setMessage(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 sendMessage();
@@ -186,18 +155,11 @@ function App() {
             }}
           />
 
-          <button onClick={startVoiceInput}>
-            🎤
-          </button>
+          <button onClick={startVoiceInput}>🎤</button>
 
-          <button onClick={sendMessage}>
-            Send
-          </button>
-
+          <button onClick={sendMessage}>Send</button>
         </div>
-
       </div>
-
     </div>
   );
 }

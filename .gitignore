@@ -1,0 +1,19 @@
+# Python
+backend/env310/
+backend/__pycache__/
+*.pyc
+
+# Environment files
+backend/.env
+frontend/.env
+
+# Uploads & generated files
+backend/uploads/
+backend/faiss_index/
+
+# Node
+frontend/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
